@@ -1,0 +1,21 @@
+Transaction (Broadcasted to all nodes) --> Block: (nodes collect transactions to block) --> hash for block found and the hash is boardcasted to all other nodes 
+
+
+Transaction: 
+    - need public and private ellciptic curve keys 
+
+Block:
+    - Timestamp
+    - nonce
+    - root hash
+    - previous hash 
+
+Node: 
+    - Aggregate transactions into a block 
+    - find appropriate hash for block
+    - get rewarded for hash with a coin
+    - verify other nodes work 
+
+Misc: 
+    - increase hash pattern difficulty 
+    ** the network can just be a shared memory region??? **

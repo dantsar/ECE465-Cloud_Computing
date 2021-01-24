@@ -1,0 +1,12 @@
+Transaction (Broadcasted to all nodes) --> Block: (nodes collect transactions to block) --> hash for block found and boardcasted out
+
+Block:
+    - Timestamp
+    - nonce
+    - root hash
+    - previous hash 
+
+Node: 
+    - Aggregate transactions into a block 
+    - find appropriate hash for block
+    - get rewarded for hash 
