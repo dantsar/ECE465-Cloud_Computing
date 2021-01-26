@@ -3,12 +3,13 @@ Transaction (Broadcasted to all nodes) --> Block: (nodes collect transactions to
 
 Transaction: 
     - need public and private ellciptic curve keys 
+    - **for now** transactions can only involve one coin
 
 Block:
     - Timestamp
     - nonce
-    - root hash
-    - previous hash 
+    - root hash(hash of all transactions)
+    - previous block hash 
 
 Node: 
     - Aggregate transactions into a block 
@@ -17,5 +18,5 @@ Node:
     - verify other nodes work 
 
 Misc: 
-    - increase hash pattern difficulty 
+    - increase hash pattern difficulty ?
     ** the network can just be a shared memory region??? **

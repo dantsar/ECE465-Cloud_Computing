@@ -1,6 +1,8 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import java.security.spec.EllipticCurve;
+
 
 public class Main{
 
@@ -17,10 +19,12 @@ public class Main{
         return hexString.toString();
     }
 
-//    int x = 5;
+    int x = 5;
     public static void main(String [] args)
     {
 //        Main tes = new Main();
+//        System.out.println("THE NUMBER IS: " + tes.x);
+//        tes.x = 100;
 //        System.out.println("THE NUMBER IS: " + tes.x);
 
 //        OtherClass other = new OtherClass();
@@ -29,21 +33,27 @@ public class Main{
 //        String myName = "Daniel Tsarev";
 //        other.greetPerson(myName);
 
+
     /* playing around with SHA256 */
-    String testStr = "Hello there, my name is Daniel Tsarev!";
-
-    MessageDigest md = null;
-
-    try{
-        md = MessageDigest.getInstance("SHA-256");
-    }catch(NoSuchAlgorithmException e){
-        /* Log error later */
-        System.out.println("No such hash algorithm");
-    }
-    byte[] enc_msg = md.digest(testStr.getBytes());
+//    String testStr = "Hello there, my name is Daniel Tsarev!";
+//
+//    MessageDigest md = null;
+//
+//    try{
+//        md = MessageDigest.getInstance("SHA-256");
+//    }catch(NoSuchAlgorithmException e){
+//        /* Log error later */
+//        System.out.println("No such hash algorithm");
+//    }
+//    byte[] enc_msg = md.digest(testStr.getBytes());
+//    
+//    String hash = bytesToHex(enc_msg);
+//    System.out.println("String: " + testStr);
+//    System.out.println("Hashed string: " + hash);
+    /* playing around with Elliptic Curve */
     
-    String hash = bytesToHex(enc_msg);
-    System.out.println(hash);
+    System.out.println("hello there");
     }
 
+ 
 }
