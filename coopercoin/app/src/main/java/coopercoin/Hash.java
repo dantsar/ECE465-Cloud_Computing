@@ -6,10 +6,13 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Helper/Utility class that provides the functions needed for hashing
+ * The class only needs to be initialized once with the algorithm 
+ * that is provided once 
  */
 
 public class Hash
 {
+    /* basically a global class*/
     private static MessageDigest md = null;
 
     public Hash(String algo){
@@ -44,16 +47,5 @@ public class Hash
         String hash = bytesToHex(strToHash(str));
         return hash;
     }
-
-//    public static byte[] hexToBytes(String hex){
-//        byte[] bytes = new byte[hex.length()/2];
-//        for(int i = 0; i < hex.length(); i++){
-//
-//            /* stuff later */
-//
-//        }
-//
-//        return bytes;
-//    }
 
 }

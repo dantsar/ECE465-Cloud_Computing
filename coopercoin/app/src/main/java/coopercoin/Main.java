@@ -5,6 +5,7 @@ public class Main{
     public static void main(String [] args){
         String name = "Daniel Tsarev";
         Hash h = new Hash("SHA-256");
+//        Security.addProvider(new BouncyCastleProvider());
 //        System.out.println(name);
 //        System.out.println(Hash.strToHexHash(name));
 
@@ -16,11 +17,12 @@ public class Main{
 //        Block b = new Block("My name jeff");
 
         Wallet w = new Wallet();
-        byte[] sign = w.signTrans(name);
+        Transaction t = new Transaction();
+        
+        byte[] sign = t.signTrans(name, w.getPrivKey());
         System.out.println(Hash.bytesToHex(sign));
 
-        if(w.verifySig("Not Daniel Tsarev", sign))
-        {
+        if(t.verifySig(name, sign, w.getPubKey())){
             System.out.println("verified");
         }else{
             System.out.println("not verified");
