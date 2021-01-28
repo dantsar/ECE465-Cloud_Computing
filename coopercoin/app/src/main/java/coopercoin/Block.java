@@ -1,4 +1,4 @@
-package badcoin;
+package coopercoin;
 
 import java.util.Date;
 

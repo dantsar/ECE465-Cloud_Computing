@@ -1,4 +1,4 @@
-package badcoin;
+package coopercoin;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -45,15 +45,15 @@ public class Hash
         return hash;
     }
 
-    public static byte[] hexToBytes(String hex){
-        byte[] bytes = new byte[hex.length()/2];
-        for(int i = 0; i < hex.length(); i++){
-
-            /* stuff later */
-
-        }
-
-        return bytes;
-    }
+//    public static byte[] hexToBytes(String hex){
+//        byte[] bytes = new byte[hex.length()/2];
+//        for(int i = 0; i < hex.length(); i++){
+//
+//            /* stuff later */
+//
+//        }
+//
+//        return bytes;
+//    }
 
 }
