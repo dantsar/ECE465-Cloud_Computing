@@ -16,8 +16,16 @@ public class Main{
 //        Block b = new Block("My name jeff");
 
         Wallet w = new Wallet();
-        String sign = w.signString(name);
-        w.signString("FUUUUUUUUCK JAVA");
+        byte[] sign = w.signTrans(name);
+        System.out.println(Hash.bytesToHex(sign));
+
+        if(w.verifySig("Not Daniel Tsarev", sign))
+        {
+            System.out.println("verified");
+        }else{
+            System.out.println("not verified");
+        }
+
     }
 
 }
