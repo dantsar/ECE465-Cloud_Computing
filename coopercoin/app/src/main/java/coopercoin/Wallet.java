@@ -13,7 +13,7 @@ public class Wallet{
 
     public PublicKey pubKey;
     public PrivateKey privKey;
-    HashMap<String,TxOut> UTXOs = new HashMap<String,TxOut>();
+    HashMap<String,Tx.Output> UTXOs = new HashMap<String,Tx.Output>();
 
     public Wallet(){
         genKeyPair();
@@ -36,12 +36,12 @@ public class Wallet{
     }
 
     public Tx sendAmt(PublicKey receiver, float amount){
-        ArrayList<TxIn> input = new ArrayList<TxIn>();
+        ArrayList<Tx.Input> input = new ArrayList<Tx.Input>();
 
         float value = 0f;
         for(String i : UTXOs.keySet()){
             value += UTXOs.get(i).value;
-            input.add(new TxIn(UTXOs.get(i).txId));
+            input.add(new Tx().new Input(UTXOs.get(i).txId)); /* this is super ugly. Trust me, I know*/
             if(value >= amount) break;
         }
 
@@ -54,8 +54,8 @@ public class Wallet{
         tx.signTx(privKey);
 
         /* clear input UTXOs */
-        for(TxIn i : input){
-            UTXOs.remove(i.txOutId);
+        for(Tx.Input i : input){
+            UTXOs.remove(i.outputId);
         }
 
         return tx;
@@ -65,7 +65,7 @@ public class Wallet{
     public float getBalance(){
         float balance = 0;
         for(String i : Main.UTXOPool.keySet()){
-            TxOut txOut = UTXOs.get(i);
+            Tx.Output txOut = UTXOs.get(i);
             if(txOut.isMine(pubKey)){
                 balance += UTXOs.get(i).value;
                 UTXOs.put(txOut.txId, txOut);

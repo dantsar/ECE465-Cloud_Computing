@@ -7,8 +7,33 @@ import java.security.Signature;
 
 public class Tx
 {
-    
+    public class Input{
+        public Output UTXO;
+        public String outputId;
 
+        public Input(String outputId){
+            this.outputId = outputId;
+
+        }
+    }    
+
+    public class Output{
+        public String parentTxId;
+        public PublicKey receiver;
+        public float value;
+        public String txId;
+
+        public Output(PublicKey receiver, float value, String parentTxId){
+            this.receiver = receiver;
+            this.value = value;
+            this.parentTxId = parentTxId;
+            this.txId = HashUtil.strToHexHash(HashUtil.strFromKey(receiver) + value + parentTxId);
+        }
+        
+        public boolean isMine(PublicKey pub){
+            return receiver==pub;
+        }
+    }
 
     public PublicKey sender;
     public PublicKey receiver;
@@ -17,18 +42,23 @@ public class Tx
     byte[] txHash;
     byte[] digitalSignature;
 
-    public ArrayList<TxIn> txIns = new ArrayList<TxIn>();
-    public ArrayList<TxOut> txOut = new ArrayList<TxOut>();
+    public ArrayList<Input> txIns;
+    public ArrayList<Output> txOut;
     
     
+    public Tx(){}
+
     /* don't forget the in and out */
-    public Tx(PublicKey sender, PublicKey receiver, float amount, ArrayList<TxIn> inputs){
+    public Tx(PublicKey sender, PublicKey receiver, float amount, ArrayList<Input> inputs){
+        ArrayList<Input> txIns = new ArrayList<Input>();
+        ArrayList<Output> txOut = new ArrayList<Output>();
         this.sender = sender;
         this.receiver = receiver;
         this.amtSent = amount;
         this.timestamp = new Date().getTime();
         this.txIns = inputs;
     }
+
 
     /* gets called by Block when it's processing the transaction */
     public boolean processTx(){
