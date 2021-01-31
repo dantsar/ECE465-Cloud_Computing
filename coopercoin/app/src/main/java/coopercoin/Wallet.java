@@ -1,24 +1,21 @@
 package coopercoin;
 
-import java.security.*;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
+import java.security.PrivateKey;
+import java.security.KeyPair;
 import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
-import org.bouncycastle.*;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
+import java.util.HashMap;
 
 public class Wallet{
 
-    /* public and private key pairs */
     public PublicKey pubKey;
     public PrivateKey privKey;
-
-    /* Array list of UTXOs (unspent transactions) */
-    ArrayList<Transaction> UTXOs = new ArrayList<Transaction>();
+    HashMap<String,TxOut> UTXOs = new HashMap<String,TxOut>();
 
     public Wallet(){
-        Security.addProvider(new BouncyCastleProvider());
         genKeyPair();
     }
 
@@ -32,20 +29,49 @@ public class Wallet{
             pubKey = keys.getPublic();
             privKey = keys.getPrivate();
         }catch(Exception e){
-            /* acutal error reporting later :^) */
+            /* acutal error reporting and loggin later :^) */
             System.out.println("Key Generation Failed");
             System.out.println(e);
         }
     }
 
-    public PublicKey getPubKey(){
-        return pubKey;
+    public Tx sendAmt(PublicKey receiver, float amount){
+        ArrayList<TxIn> input = new ArrayList<TxIn>();
+
+        float value = 0f;
+        for(String i : UTXOs.keySet()){
+            value += UTXOs.get(i).value;
+            input.add(new TxIn(UTXOs.get(i).txId));
+            if(value >= amount) break;
+        }
+
+        if(value < amount){
+            System.out.println("Wallet: " + HashUtil.strFromKey(pubKey) + " is broke and can't send " + amount);
+            return null;
+        }
+
+        Tx tx = new Tx(pubKey, receiver, amount, input);
+        tx.signTx(privKey);
+
+        /* clear input UTXOs */
+        for(TxIn i : input){
+            UTXOs.remove(i.txOutId);
+        }
+
+        return tx;
     }
 
-    /* LMAOOO WHO CARE'S ABOUT SECURITY */
-    /* will fix this later? */
-    public PrivateKey getPrivKey(){
-        return privKey;
+    /* access the global Main.UTXOPool and confirms the transaction */
+    public float getBalance(){
+        float balance = 0;
+        for(String i : Main.UTXOPool.keySet()){
+            TxOut txOut = UTXOs.get(i);
+            if(txOut.isMine(pubKey)){
+                balance += UTXOs.get(i).value;
+                UTXOs.put(txOut.txId, txOut);
+            }
+        }   
+        return balance;
     }
 
 }

@@ -1,5 +1,7 @@
 package coopercoin;
 
+import java.util.Base64;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -10,12 +12,12 @@ import java.security.NoSuchAlgorithmException;
  * that is provided once 
  */
 
-public class Hash
+public class HashUtil
 {
     /* basically a global class*/
     private static MessageDigest md = null;
 
-    public Hash(String algo){
+    public HashUtil(String algo){
         try{
             md = MessageDigest.getInstance(algo);
         }catch(NoSuchAlgorithmException e){
@@ -27,7 +29,7 @@ public class Hash
     /* From https://www.baeldung.com/sha-256-hashing-java */
     public static String bytesToHex(byte[] hash){
         StringBuilder hexString = new StringBuilder(2 * hash.length);
-        for (int i = 0; i < hash.length; i++) {
+        for(int i = 0; i < hash.length; i++) {
             String hex = Integer.toHexString(0xff & hash[i]);
             if(hex.length() == 1) {
                 hexString.append('0');
@@ -42,10 +44,14 @@ public class Hash
         return hash;
     }
 
-    /* quality of life */
     public static String strToHexHash(String str){
         String hash = bytesToHex(strToHash(str));
         return hash;
+    }
+
+    /* https://stackoverflow.com/questions/52384809/public-key-to-string-and-then-back-to-public-key-java */
+    public static String strFromKey(Key key){
+        return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
 }

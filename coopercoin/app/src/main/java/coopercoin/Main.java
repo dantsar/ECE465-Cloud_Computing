@@ -1,33 +1,35 @@
 package coopercoin;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import java.security.Security;
+import java.util.HashMap;
+
 public class Main{
 
+    /* global hashmap that the wallets access to get their balance and confirm payments */
+    public static HashMap<String,TxOut> UTXOPool = new HashMap<String,TxOut>();
+//  public static Block blockChain = new Block();
+
+    public static int difficulty = 3;
+    public static Wallet wA;
+    public static Wallet wB;
+    public static Tx genesis;
+    public static float minTx = 0.01f;
+
     public static void main(String [] args){
-        String name = "Daniel Tsarev";
-        Hash h = new Hash("SHA-256");
-//        Security.addProvider(new BouncyCastleProvider());
-//        System.out.println(name);
-//        System.out.println(Hash.strToHexHash(name));
+        Security.addProvider(new BouncyCastleProvider());
 
+        wA = new Wallet();
+        wB = new Wallet();
+        Wallet coinbase = new Wallet();
 
-//        byte [] hash = h.strToHash(name);
-//        System.out.println(h.bytesToHex(hash));
-//
-//        System.out.println(h.strToHexHash(name));
-//        Block b = new Block("My name jeff");
+        /* Genesis Transaction */
+        genesis = new Tx(coinbase.pubKey, wA.pubKey, 100f, null);
+        //UTXOs.put( ,genesis);
 
-        Wallet w = new Wallet();
-        Transaction t = new Transaction();
+        System.out.println("A's Balance: " + wA.getBalance());
         
-        byte[] sign = t.signTrans(name, w.getPrivKey());
-        System.out.println(Hash.bytesToHex(sign));
-
-        if(t.verifySig(name, sign, w.getPubKey())){
-            System.out.println("verified");
-        }else{
-            System.out.println("not verified");
-        }
-
+        
     }
 
 }
