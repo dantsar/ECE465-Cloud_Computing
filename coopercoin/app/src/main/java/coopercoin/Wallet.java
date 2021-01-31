@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class Wallet{
 
     public PublicKey pubKey;
-    public PrivateKey privKey;
+    private PrivateKey privKey;
     HashMap<String,Tx.Output> UTXOs = new HashMap<String,Tx.Output>();
 
     public Wallet(){
@@ -41,12 +41,12 @@ public class Wallet{
         float value = 0f;
         for(String i : UTXOs.keySet()){
             value += UTXOs.get(i).value;
-            input.add(new Tx().new Input(UTXOs.get(i).txId)); /* this is super ugly. Trust me, I know*/
+            input.add(new Tx().new Input(UTXOs.get(i).txId)); /* this is super ugly. Trust me, I know :^)*/
             if(value >= amount) break;
         }
 
         if(value < amount){
-            System.out.println("Wallet: " + HashUtil.strFromKey(pubKey) + " is broke and can't send " + amount);
+            System.out.println("Wallet: " + HashUtil.hexFromKey(pubKey) + " is broke and can't send " + amount);
             return null;
         }
 
@@ -61,7 +61,23 @@ public class Wallet{
         return tx;
     }
 
+    /* needed for genesis transaction, without making the private key public */
+    public byte[] signTx(byte[] txHash){
+        byte[] signBytes = null;
+        try{
+            Signature sign = Signature.getInstance("ECDSA", "BC");
+            sign.initSign(privKey);                               
+            sign.update(txHash);                                  
+            signBytes = sign.sign();                  
+        }catch(Exception e){                                      
+            System.out.println("Signature Failed");               
+            System.out.println(e);                                
+        }
+        return signBytes;
+    }
+
     /* access the global Main.UTXOPool and confirms the transaction */
+    /* TO DO: rewrite to use UTXOPool class... maybe?*/
     public float getBalance(){
         float balance = 0;
         for(String i : Main.UTXOPool.keySet()){

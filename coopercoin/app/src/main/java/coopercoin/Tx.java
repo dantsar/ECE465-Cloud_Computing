@@ -2,7 +2,8 @@ package coopercoin;
 
 import java.util.Date;
 import java.util.ArrayList;
-import java.security.*;
+import java.security.PublicKey;
+import java.security.PrivateKey;
 import java.security.Signature;
 
 public class Tx
@@ -13,7 +14,6 @@ public class Tx
 
         public Input(String outputId){
             this.outputId = outputId;
-
         }
     }    
 
@@ -27,7 +27,7 @@ public class Tx
             this.receiver = receiver;
             this.value = value;
             this.parentTxId = parentTxId;
-            this.txId = HashUtil.strToHexHash(HashUtil.strFromKey(receiver) + value + parentTxId);
+            this.txId = HashUtil.strToHexHash(HashUtil.hexFromKey(receiver) + value + parentTxId);
         }
         
         public boolean isMine(PublicKey pub){
@@ -50,7 +50,7 @@ public class Tx
 
     /* don't forget the in and out */
     public Tx(PublicKey sender, PublicKey receiver, float amount, ArrayList<Input> inputs){
-        ArrayList<Input> txIns = new ArrayList<Input>();
+//        ArrayList<Input> txIns = new ArrayList<Input>();
         ArrayList<Output> txOut = new ArrayList<Output>();
         this.sender = sender;
         this.receiver = receiver;
@@ -67,19 +67,16 @@ public class Tx
         return false;
     }
 
-//    public setHash(){
-//        this.txHash = HashUtil.strToHash(HashUtil.strFromKey(sender)+
-//                                         HashUtil.strFromKey(receiver)+
-//                                         this.amtSent+
-//                                         this.timestamp);
-//    }
-    
+    public byte[] setHash(){
+        txHash = HashUtil.strToSHA256(HashUtil.hexFromKey(sender)+
+                                      HashUtil.hexFromKey(receiver)+
+                                      amtSent+
+                                      timestamp);
+        return txHash;
+    }
 
     public void signTx(PrivateKey privKey){
-//        byte[] bytes = str.getBytes();
-//        byte[] sigBytes = null;
         try{
-//            Signature sign = Signature.getInstance("SHA256withECDSA");
             Signature sign = Signature.getInstance("ECDSA", "BC");
             sign.initSign(privKey);
             sign.update(txHash);

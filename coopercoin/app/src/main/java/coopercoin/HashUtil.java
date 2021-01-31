@@ -1,7 +1,7 @@
 package coopercoin;
 
-// import java.util.Base64;
-// import java.security.Key;
+import java.util.Base64;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -26,14 +26,15 @@ public class HashUtil
         }
     }
 
+
+
     /* From https://www.baeldung.com/sha-256-hashing-java */
-    public static String SHA256toHex(String input){
+    public static String SHA256toHex(byte[] hash){
         try{
             MessageDigest digest = MessageDigest.getInstance("SHA-256");	        
-            byte[] hash = digest.digest(input.getBytes("UTF-8"));
 
-            StringBuffer hexString = new StringBuffer();
-            for(int i = 0; i < hash.length; i++) {
+            StringBuilder hexString = new StringBuilder(2 * hash.length);
+            for (int i = 0; i < hash.length; i++) {
                 String hex = Integer.toHexString(0xff & hash[i]);
                 if(hex.length() == 1) {
                     hexString.append('0');
@@ -41,25 +42,23 @@ public class HashUtil
                 hexString.append(hex);
             }
             return hexString.toString();
-        }
-        catch(Exception err) {
+
+        } catch(Exception err) {
 			throw new RuntimeException(err);
 		}
     }
 
-    // public static byte[] strToHash(String str){
-    //     byte[] hash = md.digest(str.getBytes()); 
-    //     return hash;
-    // }
+     public static byte[] strToSHA256(String str){
+         return md.digest(str.getBytes()); 
+     }
 
-    // public static String strToHexHash(String str){
-    //     String hash = bytesToHex(strToHash(str));
-    //     return hash;
-    // }
+     public static String strToHexHash(String str){
+         return SHA256toHex(strToSHA256(str));
+     }
 
-    // /* https://stackoverflow.com/questions/52384809/public-key-to-string-and-then-back-to-public-key-java */
-    // public static String strFromKey(Key key){
-    //     return Base64.getEncoder().encodeToString(key.getEncoded());
-    // }
+     /* https://stackoverflow.com/questions/52384809/public-key-to-string-and-then-back-to-public-key-java */
+     public static String hexFromKey(Key key){
+         return Base64.getEncoder().encodeToString(key.getEncoded());
+     }
 
 }
