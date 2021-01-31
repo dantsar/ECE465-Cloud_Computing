@@ -1,49 +1,38 @@
 package coopercoin;
 
-import java.util.Date;
-
-/**
- *
- *
- *
- */
-
-
 public class Block
 {
-    public byte[] prevHashUtil; 
-    public byte[] rootHashUtil;
-    public byte[] blockHashUtil;
+    // public byte[] prevHashUtil; 
+    // public byte[] rootHashUtil;
+    // public byte[] blockHashUtil;
+
+    public String blockHash;
+    public String prevHash;
     public long date; 
     public String data;
     private int nonce; 
-    
 
-
-    public Block(String data){
+    public Block(String data, String prevHash, long date){
+        this.prevHash = prevHash;
+        this.blockHash = getHashUtil();
         this.data = data;
-//        this.prevHashUtil = prevHashUtil;
-        this.date = new Date().getTime();
+        this.date = date;
         this.nonce = 0;
-        getHashUtil();
     }
 
-    public void getHashUtil(){
-        String stuff = data + date + nonce;
-        System.out.println(HashUtil.strToHexHash(stuff));
+    public String getHashUtil(){
+        String hash = HashUtil.SHA256toHex(prevHash + data + date + nonce);
+        return hash;
     }
 
-
-
-//    public byte[] getRootHashUtil(ArrayList<Tx> ){
-//
-//        
-//    }
-
-
-//    public byte[] mineBlock(int diff){
-//        byte[] stuff;
-//    }
+    // public String mineBlock(int prefix) {
+    //     String prefixString = new String(new char[prefix]).replace('\0', '0');
+    //     while (!hash.substring(0, prefix).equals(prefixString)) {
+    //         nonce++;
+    //         hash = calculateBlockHash();
+    //     }
+    //     return hash;
+    // }
 
     
 }
