@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashUtil
 {
-    /* basically a global class*/
+    /* basically a global class */
     private static MessageDigest md = null;
 
     public HashUtil(String algo){
@@ -26,13 +26,9 @@ public class HashUtil
         }
     }
 
-
-
     /* From https://www.baeldung.com/sha-256-hashing-java */
     public static String SHA256toHex(byte[] hash){
         try{
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");	        
-
             StringBuilder hexString = new StringBuilder(2 * hash.length);
             for (int i = 0; i < hash.length; i++) {
                 String hex = Integer.toHexString(0xff & hash[i]);

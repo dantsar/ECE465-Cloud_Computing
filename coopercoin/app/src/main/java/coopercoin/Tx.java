@@ -39,24 +39,25 @@ public class Tx
     public PublicKey receiver;
     long timestamp;
     float amtSent;
+    String txId;
+
     byte[] txHash;
     byte[] digitalSignature;
-
-    public ArrayList<Input> txIns;
-    public ArrayList<Output> txOut;
+    public ArrayList<Input> txIns = new ArrayList<Input>();
+    public ArrayList<Output> txOut = new ArrayList<Output>();
     
+    public static int txSequence = 0;
     
     public Tx(){}
 
     /* don't forget the in and out */
     public Tx(PublicKey sender, PublicKey receiver, float amount, ArrayList<Input> inputs){
-//        ArrayList<Input> txIns = new ArrayList<Input>();
-        ArrayList<Output> txOut = new ArrayList<Output>();
         this.sender = sender;
         this.receiver = receiver;
         this.amtSent = amount;
         this.timestamp = new Date().getTime();
         this.txIns = inputs;
+        setHash();
     }
 
 
@@ -70,8 +71,9 @@ public class Tx
     public byte[] setHash(){
         txHash = HashUtil.strToSHA256(HashUtil.hexFromKey(sender)+
                                       HashUtil.hexFromKey(receiver)+
-                                      amtSent+
-                                      timestamp);
+                                      Float.toString(amtSent)+
+                                      Long.toString(timestamp)+
+                                      txSequence); // timestamp might not be necessary */
         return txHash;
     }
 
@@ -90,11 +92,11 @@ public class Tx
 
     /* Will probably be in the block,
        but here for now!! */
-    public boolean verifySig(String data, byte[] sig, PublicKey pubKey){
+    public boolean verifySig(byte[] data, byte[] sig, PublicKey pubKey){
         try{
             Signature sign = Signature.getInstance("ECDSA", "BC");
             sign.initVerify(pubKey);
-            sign.update(data.getBytes());
+            sign.update(data);
             return sign.verify(sig);
         }catch(Exception e){
             System.out.println("Signature Failed");
@@ -102,6 +104,5 @@ public class Tx
         }
         return false;
     }
-
 
 }

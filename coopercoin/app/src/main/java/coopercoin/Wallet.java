@@ -39,11 +39,17 @@ public class Wallet{
         ArrayList<Tx.Input> input = new ArrayList<Tx.Input>();
 
         float value = 0f;
-        for(String i : UTXOs.keySet()){
-            value += UTXOs.get(i).value;
-            input.add(new Tx().new Input(UTXOs.get(i).txId)); /* this is super ugly. Trust me, I know :^)*/
-            if(value >= amount) break;
+        for(String i : UTXOs.values()){
+//            value += UTXOs.get(i).value;
+            System.out.println("value: " + i.value);
+//            input.add(new Tx().new Input(UTXOs.get(i).txId)); /* this is super ugly. Trust me, I know :^)*/
+//            if(value >= amount) break;
         }
+
+        for(Tx.Input i: input){
+            System.out.println("value: " + i.UTXO.value);
+        }
+    
 
         if(value < amount){
             System.out.println("Wallet: " + HashUtil.hexFromKey(pubKey) + " is broke and can't send " + amount);
@@ -61,7 +67,7 @@ public class Wallet{
         return tx;
     }
 
-    /* needed for genesis transaction, without making the private key public */
+    /* needed for genesis transaction, without making the private key public :^) */
     public byte[] signTx(byte[] txHash){
         byte[] signBytes = null;
         try{
@@ -81,10 +87,10 @@ public class Wallet{
     public float getBalance(){
         float balance = 0;
         for(String i : Main.UTXOPool.keySet()){
-            Tx.Output txOut = UTXOs.get(i);
-            if(txOut.isMine(pubKey)){
-                balance += UTXOs.get(i).value;
-                UTXOs.put(txOut.txId, txOut);
+            Tx.Output tx = Main.UTXOPool.get(i);
+            if(tx.isMine(pubKey)){
+                balance += tx.value;
+                UTXOs.put(tx.txId, tx);
             }
         }   
         return balance;

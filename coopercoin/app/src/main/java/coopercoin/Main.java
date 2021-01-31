@@ -18,21 +18,46 @@ public class Main{
 
     public static void main(String [] args){
         Security.addProvider(new BouncyCastleProvider());
+        new HashUtil("SHA-256");
 
         wA = new Wallet();
         wB = new Wallet();
         Wallet coinbase = new Wallet();
 
         /* Genesis Transaction */
-        genesis = new Tx(coinbase.pubKey, wA.pubKey, 100f, null);
-        coinbase.signTx(genesis.txHash);
+        float genesisAmount = 150f;
+        genesis = new Tx(coinbase.pubKey, wA.pubKey, genesisAmount, null);
+        genesis.setHash();
+        genesis.digitalSignature = coinbase.signTx(genesis.txHash);
+        genesis.txOut.add(0, new Tx().new Output(wA.pubKey, genesisAmount, genesis.txId));
+        UTXOPool.put(genesis.txOut.get(0).txId, genesis.txOut.get(0));
+
+        System.out.println("A's Balance: " + wA.getBalance());
+
+        wA.sendAmt(wB.pubKey, 25f);
+        System.out.println("A's Balance: " + wA.getBalance());
+//        wA.getBalance();
+
+
+//        genesis.txId
+                
+
+//        String hash = HashUtil.SHA256toHex(genesis.txHash);
+//        System.out.println(hash);
+//        System.out.println(HashUtil.SHA256toHex(genesis.digitalSignature));
+//
+//        if(genesis.verifySig(genesis.txHash, genesis.digitalSignature, coinbase.pubKey) == true){
+//            System.out.println("verified");
+//        }else{
+//            System.out.println("error, not verified");
+//
+//        }
 
 
 //        genesis.signTx(coinbase.privKey);
 //        UTXOPool.put(
         //UTXOs.put( ,genesis);
 
-        System.out.println("A's Balance: " + wA.getBalance());
         
         
     }
