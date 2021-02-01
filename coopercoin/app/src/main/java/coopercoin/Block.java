@@ -1,38 +1,40 @@
 package coopercoin;
 
+import java.security.MessageDigest;
+
 public class Block
 {
-    // public byte[] prevHashUtil; 
-    // public byte[] rootHashUtil;
-    // public byte[] blockHashUtil;
-
     public String blockHash;
     public String prevHash;
-    public long date; 
+    private long date; 
     public String data;
     private int nonce; 
 
-    public Block(String data, String prevHash, long date){
+    public Block(String data, String prevHash){
         this.prevHash = prevHash;
-//        this.blockHash = getHashUtil();
         this.data = data;
-        this.date = date;
-        this.nonce = 0;
+        this.date = System.currentTimeMillis();
+        this.blockHash = getHash();
     }
 
-//    public String getHashUtil(){
-//        String hash = HashUtil.SHA256toHex(prevHash + data + date + nonce);
-//        return hash;
-//    }
+   public String getHash(){
+        String preImage = prevHash + data + date + Integer.toString(nonce);
+        try{
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");  
+            byte[] hash = digest.digest(preImage.getBytes());
+            String hexHash = HashUtil.SHA256toHex(hash);
+            return hexHash;
+        }
+        catch(Exception err) {
+			throw new RuntimeException(err);
+		}
+    }
 
-    // public String mineBlock(int prefix) {
-    //     String prefixString = new String(new char[prefix]).replace('\0', '0');
-    //     while (!hash.substring(0, prefix).equals(prefixString)) {
-    //         nonce++;
-    //         hash = calculateBlockHash();
-    //     }
-    //     return hash;
-    // }
-
-    
+    public void mineBlock(int prefix) {
+        String prefixString = new String(new char[prefix]).replace('\0', '0');
+        while (!blockHash.substring(0, prefix).equals(prefixString)) {
+            nonce++;
+            blockHash = getHash();
+        }
+    }
 }
