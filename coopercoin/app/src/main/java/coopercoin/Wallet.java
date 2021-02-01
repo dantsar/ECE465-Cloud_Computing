@@ -51,12 +51,6 @@ public class Wallet{
             input.add(new Tx().new Input(UTXO.txId));
             if(total >= amount) break;
         }
-//        for(String i : UTXOs.keySet()){
-//            System.out.println(i);
-//            value += UTXOs.get(i).value;
-//            input.add(new Tx().new Input(UTXOs.get(i).txId)); /* this is super ugly. Trust me, I know :^)*/
-//            if(value >= amount) break;
-//        }
 
         Tx tx = new Tx(pubKey, receiver, amount, input);
         tx.signTx(privKey);
@@ -70,15 +64,11 @@ public class Wallet{
     }
     
     /* debugging */
-    public void seeWallet(){
-        for(String i : UTXOs.keySet()){
-            System.out.println(i + " " + UTXOs.get(i).value);
-
-        }
-
-    }
-
-    
+//    public void seeWallet(){
+//        for(String i : UTXOs.keySet()){
+//            System.out.println(i + " " + UTXOs.get(i).value);
+//        }
+//    }
 
     /* needed for genesis transaction, without making the private key public :^) */
     public byte[] signTx(byte[] txHash){
@@ -96,7 +86,6 @@ public class Wallet{
     }
 
     /* access the global Main.UTXOPool and confirms the transaction */
-    /* TO DO: rewrite to use UTXOPool class... maybe?*/
     public float getBalance(){
         float balance = 0;
         for(String i : Main.UTXOPool.keySet()){

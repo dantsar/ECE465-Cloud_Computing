@@ -10,12 +10,12 @@ public class test {
 		for(int n = 0; n < 4; n++){
 			String nString = n + "";
 			if(n == 0){
-				blockchain.add(new Block("Genesis block", "0"));
+//				blockchain.add(new Block("Genesis block", "0"));
 			}
 			else{
-				blockchain.add(new Block("Block " + nString, blockchain.get(n-1).blockHash));	
+//				blockchain.add(new Block("Block " + nString, blockchain.get(n-1).blockHash));	
 			}
-			blockchain.get(n).mineBlock(difficulty);
+//			blockchain.get(n).mineBlock(difficulty);
 			System.out.println("Block "+n+" mined!\t"+blockchain.get(n).blockHash);
 		}
 	}

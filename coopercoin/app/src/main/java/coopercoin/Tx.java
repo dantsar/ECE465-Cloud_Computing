@@ -35,8 +35,8 @@ public class Tx
         }
     }
 
-    public PublicKey sender;
-    public PublicKey receiver;
+    public PublicKey sender = null;
+    public PublicKey receiver = null;
     long timestamp;
     float amtSent;
     String txId;
@@ -133,20 +133,4 @@ public class Tx
             System.out.println(e);
         }
     }
-
-
-    /* Will probably be in the block,
-       but here for now!! */
-//    public boolean verifySig(byte[] data, byte[] sig, PublicKey pubKey){
-//        try{
-//            Signature sign = Signature.getInstance("ECDSA", "BC");
-//            sign.initVerify(pubKey);
-//            sign.update(data);
-//            return sign.verify(sig);
-//        }catch(Exception e){
-//            System.out.println("Signature Failed");
-//            System.out.println(e);
-//        }
-//        return false;
-//    }
 }

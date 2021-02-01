@@ -44,17 +44,18 @@ public class HashUtil
 		}
     }
 
-     public static byte[] strToSHA256(String str){
-         return md.digest(str.getBytes()); 
-     }
+    public static byte[] strToSHA256(String str){
+        return md.digest(str.getBytes()); 
+    }
 
-     public static String strToHexHash(String str){
-         return SHA256toHex(strToSHA256(str));
-     }
+    public static String strToHexHash(String str){
+        return SHA256toHex(strToSHA256(str));
+    }
 
-     /* https://stackoverflow.com/questions/52384809/public-key-to-string-and-then-back-to-public-key-java */
-     public static String hexFromKey(Key key){
-         return Base64.getEncoder().encodeToString(key.getEncoded());
-     }
+    /* https://stackoverflow.com/questions/52384809/public-key-to-string-and-then-back-to-public-key-java */
+    public static String hexFromKey(Key key){
+        if(key == null) return "0";
+        return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
 
 }
