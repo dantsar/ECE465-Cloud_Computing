@@ -20,12 +20,14 @@ To build from source:
 Otherwise, download and run the .jar file.
 
 ## Usage
-If building from source, execute `gradle run` in `/coopercoin`.
-If using the .jar file, run `java -jar coopercoin.jar`.
+If building from source, execute `gradle run` in `/coopercoin`. Optionally, `gradle shadowjar` will make a fat jar in `/coopercoin/app/build/libs`.
+If using the .jar file, run `java -jar coopercoin-0.XX.jar`, where XX is the version. The jar file's permissions may need to be changed.
     
 ## Reference
 + [Bitcoin whitepaper](https://bitcoin.org/bitcoin.pdf)
 + [Bitcoin wiki](https://en.bitcoin.it/wiki/Main_Page)
++ [Shadow Gradle plugin](https://imperceptiblethoughts.com/shadow/)
++ [Bouncy Castle API](https://www.bouncycastle.org/)
 + [Programmers Blockchain](https://medium.com/programmers-blockchain/blockchain-development-mega-guide-5a316e6d10df) - [Part 1](https://medium.com/programmers-blockchain/create-simple-blockchain-java-tutorial-from-scratch-6eeed3cb03fa) and [Part 2](https://medium.com/programmers-blockchain/creating-your-first-blockchain-with-java-part-2-transactions-2cdac335e0ce)
 + [Baeldung Blockchain Tutorial](https://www.baeldung.com/java-blockchain)
 + [Naivecoin](https://lhartikk.github.io/)
