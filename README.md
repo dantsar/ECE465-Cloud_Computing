@@ -21,7 +21,7 @@ Otherwise, download and run the .jar file.
 
 ## Usage
 If building from source, execute `gradle run` in `/coopercoin`.
-If using the .jar file, run `java coopercoin`.
+If using the .jar file, run `java -jar coopercoin.jar`.
     
 ## Reference
 + [Bitcoin whitepaper](https://bitcoin.org/bitcoin.pdf)
