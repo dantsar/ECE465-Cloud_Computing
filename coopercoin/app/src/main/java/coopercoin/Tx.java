@@ -60,12 +60,57 @@ public class Tx
         setHash();
     }
 
+    public boolean verifySignature(){
+        try{
+            Signature sign = Signature.getInstance("ECDSA", "BC");
+            sign.initVerify(sender);
+            sign.update(txHash);
+            return sign.verify(digitalSignature);
+        }catch(Exception e){
+            System.out.println("Signature Failed");
+            System.out.println(e);
+        }
+        return false;
+    }
 
     /* gets called by Block when it's processing the transaction */
     public boolean processTx(){
-        /* check is input's are able to satisfy the amtSent */
-        /* gonna worry about it later */
-        return false;
+        if(verifySignature() == false){
+            System.out.println("transaction signature verification failed");
+            return false;
+        }
+
+        for(Input i : txIns){
+            i.UTXO = Main.UTXOPool.get(i.outputId); 
+        }
+
+        float inputAmt = 0;
+        for(Input i : txIns) {
+            if(i.UTXO == null) continue; 
+            inputAmt += i.UTXO.value;
+        }
+
+        if(inputAmt < amtSent){
+            System.out.println("transaction input too small");
+            return false;
+        }
+        float leftOverChange = inputAmt-amtSent;
+        txId = HashUtil.SHA256toHex(txHash);
+        txOut.add(new Output(this.receiver, amtSent, txId));
+        if(leftOverChange != 0f){
+            txOut.add(new Output(this.sender,leftOverChange,txId));
+        }
+
+       for(Output i : txOut) {
+            Main.UTXOPool.put(i.txId, i);
+        }
+
+        for(Input i : txIns){
+            if(i.UTXO==null) continue;
+            Main.UTXOPool.remove(i.UTXO.txId);
+        }
+
+        return true;
     }
 
     public byte[] setHash(){
@@ -92,17 +137,16 @@ public class Tx
 
     /* Will probably be in the block,
        but here for now!! */
-    public boolean verifySig(byte[] data, byte[] sig, PublicKey pubKey){
-        try{
-            Signature sign = Signature.getInstance("ECDSA", "BC");
-            sign.initVerify(pubKey);
-            sign.update(data);
-            return sign.verify(sig);
-        }catch(Exception e){
-            System.out.println("Signature Failed");
-            System.out.println(e);
-        }
-        return false;
-    }
-
+//    public boolean verifySig(byte[] data, byte[] sig, PublicKey pubKey){
+//        try{
+//            Signature sign = Signature.getInstance("ECDSA", "BC");
+//            sign.initVerify(pubKey);
+//            sign.update(data);
+//            return sign.verify(sig);
+//        }catch(Exception e){
+//            System.out.println("Signature Failed");
+//            System.out.println(e);
+//        }
+//        return false;
+//    }
 }

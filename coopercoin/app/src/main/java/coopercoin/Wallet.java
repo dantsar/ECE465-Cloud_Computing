@@ -8,6 +8,7 @@ import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Wallet{
 
@@ -36,25 +37,26 @@ public class Wallet{
     }
 
     public Tx sendAmt(PublicKey receiver, float amount){
-        ArrayList<Tx.Input> input = new ArrayList<Tx.Input>();
-
-        float value = 0f;
-        for(String i : UTXOs.values()){
-//            value += UTXOs.get(i).value;
-            System.out.println("value: " + i.value);
-//            input.add(new Tx().new Input(UTXOs.get(i).txId)); /* this is super ugly. Trust me, I know :^)*/
-//            if(value >= amount) break;
-        }
-
-        for(Tx.Input i: input){
-            System.out.println("value: " + i.UTXO.value);
-        }
-    
-
-        if(value < amount){
-            System.out.println("Wallet: " + HashUtil.hexFromKey(pubKey) + " is broke and can't send " + amount);
+        if(getBalance() < amount){
+            System.out.println("Not enough funds, Transaction discraded");
             return null;
         }
+    
+        ArrayList<Tx.Input> input = new ArrayList<Tx.Input>();
+
+        float total = 0f;
+        for(Map.Entry<String,Tx.Output> i: UTXOs.entrySet()){
+            Tx.Output UTXO = i.getValue();
+            total += UTXO.value;
+            input.add(new Tx().new Input(UTXO.txId));
+            if(total >= amount) break;
+        }
+//        for(String i : UTXOs.keySet()){
+//            System.out.println(i);
+//            value += UTXOs.get(i).value;
+//            input.add(new Tx().new Input(UTXOs.get(i).txId)); /* this is super ugly. Trust me, I know :^)*/
+//            if(value >= amount) break;
+//        }
 
         Tx tx = new Tx(pubKey, receiver, amount, input);
         tx.signTx(privKey);
@@ -66,6 +68,17 @@ public class Wallet{
 
         return tx;
     }
+    
+    /* debugging */
+    public void seeWallet(){
+        for(String i : UTXOs.keySet()){
+            System.out.println(i + " " + UTXOs.get(i).value);
+
+        }
+
+    }
+
+    
 
     /* needed for genesis transaction, without making the private key public :^) */
     public byte[] signTx(byte[] txHash){
