@@ -1,17 +1,22 @@
 package coopercoin;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 public class test {
-    public static void main(String[] args) {
-		Block genesisBlock = new Block("Genesis block", "0",  new Date().getTime());
-		System.out.println("Hash for block 1 : " + genesisBlock.blockHash);
-		
-		Block secondBlock = new Block("Second block",genesisBlock.blockHash, new Date().getTime());
-		System.out.println("Hash for block 2 : " + secondBlock.blockHash);
-		
-		Block thirdBlock = new Block("Third block",secondBlock.blockHash,  new Date().getTime());
-		System.out.println("Hash for block 3 : " + thirdBlock.blockHash);
-		
+	public static ArrayList<Block> blockchain = new ArrayList<Block>();
+	public static int difficulty = 4;
+
+	public static void main(String[] args) {
+		for(int n = 0; n < 4; n++){
+			String nString = n + "";
+			if(n == 0){
+				blockchain.add(new Block("Genesis block", "0"));
+			}
+			else{
+				blockchain.add(new Block("Block " + nString, blockchain.get(n-1).blockHash));	
+			}
+			blockchain.get(n).mineBlock(difficulty);
+			System.out.println("Block "+n+" mined!\t"+blockchain.get(n).blockHash);
+		}
 	}
 }
