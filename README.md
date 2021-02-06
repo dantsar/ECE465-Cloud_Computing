@@ -4,7 +4,8 @@ Repo for Cooper Union ECE-465 Cloud Computing. Our main project is CooperCoin, a
 The goal of this project is to explore blockchain applications and distributed computing.
 
 ## Features
-Rev 1a implements a single-node, multithreaded version that generates transactions between two wallets and creates a blockchain. Future 
+Rev 1a implements a single-node, multithreaded version that generates transactions between two wallets and creates a blockchain. Broken due to a race condition.
+Rev 1b fixed the race condition and implements mining and transactions. We still need to work on implementing Markle tries and blockchain validation, as well as code refactoring. 
 
 ## Requirements
 + Java 
