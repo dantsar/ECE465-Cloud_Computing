@@ -1,19 +1,24 @@
 package coopercoin;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 public class Miner extends Thread
 {
     public static int difficulty;
     public static Block globalBlock;
     public Block internalBlock;
     public static int nonce;
-    public static int nonceRange = 100;
-    public static boolean blockHashFoundFLAG;
-    public static boolean waitingFLAG; /* set if waiting for new block */
+    public static int nonceRange;
+
+    /* flags for Miners */
+    public static AtomicBoolean blockHashFoundFLAG = new AtomicBoolean(false);
+    public static AtomicBoolean waitingFLAG = new AtomicBoolean(false); /* set if waiting for new block */
 
     public Miner(Block startingBlock, int startingDifficulty){
         this.globalBlock = startingBlock;
-        this.internalBlock = startingBlock;
+        this.internalBlock = new Block(startingBlock.txMade, startingBlock.prevHash);
         this.difficulty = startingDifficulty;
+        this.nonce = 0;
+        this.nonceRange = 10000;
     }
 
     public void run(){
@@ -25,18 +30,25 @@ public class Miner extends Thread
 //        }
         System.out.println("miner running");
         while(true){
-            while(mineBlock() == false);
-            waitingFLAG = true;
-            while(waitingFLAG == true);
+            try{
+                while(mineBlock() == false) Thread.yield();
+                waitingFLAG.set(true);
+                //return;
+                while(waitingFLAG.get() == true) Thread.yield();
+            }catch(Exception e){
+                System.err.println(e);
+            }
         }
     }
+    
+//    synchronized public 
 
     /* set blockMinedFLAG is the appropriate hash was found */
     synchronized public void blockHashFound(){
-        blockHashFoundFLAG = true;
+        blockHashFoundFLAG.set(true);
         globalBlock = internalBlock;
         this.nonce = 0;
-        System.out.println("hash found");
+        System.err.println("hash found");
     }
 
     synchronized public int getNonce(){
@@ -46,27 +58,31 @@ public class Miner extends Thread
 
     synchronized public void setBlock(Block newBlock){
         this.globalBlock = newBlock;
-        this.internalBlock = newBlock;
-        this.waitingFLAG = false;
+        this.internalBlock = new Block(newBlock.txMade, newBlock.prevHash);
+        this.waitingFLAG.set(false);
+        this.blockHashFoundFLAG.set(false);
     }
 
     public boolean mineBlock(){
-        if(blockHashFoundFLAG){
+       if(blockHashFoundFLAG.get()){
             return true;
         }
-        
+
+        System.err.println("Mining Block");        
+
         int internalNonce = getNonce();
-        String blockHash = "haven't found it yet :'( ";
+        String blockHash = "bbbbbb";
         String prefixString = new String(new char[difficulty]).replace('\0', '0');
-        for(int i = internalNonce; i < internalNonce+100; i++)
+        for(int i = internalNonce; i < internalNonce+nonceRange; i++)
         {
+            internalBlock.nonce = i;
+            blockHash = internalBlock.getHash();
+
             if(blockHash.substring(0,difficulty).equals(prefixString)){
                 System.out.println(blockHash);
                 blockHashFound();
                 return true;
             }
-            internalBlock.nonce = i;
-            blockHash = internalBlock.getHash();
         }
 
         return false;

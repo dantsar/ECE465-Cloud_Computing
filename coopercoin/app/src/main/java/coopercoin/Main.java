@@ -5,8 +5,9 @@ import java.security.Security;
 import java.util.HashMap;
 import java.util.ArrayList;
 
-public class Main{
+//import org.apache.log4j.Logger;
 
+public class Main{
     /* global hashmap that the wallets access to get their balance and confirm payments */
     public static HashMap<String,Tx.Output> UTXOPool = new HashMap<String,Tx.Output>();
 
@@ -21,11 +22,12 @@ public class Main{
 
     public static void main(String [] args){
         Security.addProvider(new BouncyCastleProvider());
-        new HashUtil("SHA-256");
 
         wA = new Wallet();
         wB = new Wallet();
         Wallet coinbase = new Wallet();
+
+        System.err.println("Wallets created");
 
         /* Genesis Transaction */
         float genesisAmount = 100f;
@@ -36,7 +38,9 @@ public class Main{
         UTXOPool.put(genesisTx.txOut.get(0).txId, genesisTx.txOut.get(0));
 
         Block genesisBlock = new Block(genesisTx, "0");
-        
+        System.err.println("Genesis block made");       
+
+
         Miner miner1 = new Miner(genesisBlock, difficulty);
         Miner miner2 = new Miner(genesisBlock, difficulty);
         Miner miner3 = new Miner(genesisBlock, difficulty);
@@ -45,22 +49,46 @@ public class Main{
         miner2.start();
         miner3.start();
         
-        while(Miner.blockHashFoundFLAG == false);
+        System.err.println("Miner start");       
+
+        try{
+            while(Miner.blockHashFoundFLAG.get() == false){
+                System.out.println("waiting for hash to be done");
+                Thread.sleep(250);
+            }
+        }catch(Exception e){
+            System.out.println("problem bro");
+        }
+
         blockchain.add(genesisBlock);
 
-        System.out.println("A's Balance: " + wA.getBalance());
-        System.out.println("B's Balance: " + wB.getBalance());
+        System.err.println("A's Balance: " + wA.getBalance());
+        System.err.println("B's Balance: " + wB.getBalance());
         Tx sentToB = wA.sendAmt(wB.pubKey, 25f);
         sentToB.processTx();
-        System.out.println("sent coins");
-        System.out.println("A's Balance: " + wA.getBalance());
-        System.out.println("B's Balance: " + wB.getBalance());
+        System.err.println("sent coins");
+        System.err.println("A's Balance: " + wA.getBalance());
+        System.err.println("B's Balance: " + wB.getBalance());
         
-        Block newBlock = new Block(sentToB, sentToB.txId);
+        Block newBlock = new Block(sentToB, genesisBlock.blockHash);
         miner1.setBlock(newBlock); 
-        while(miner1.blockHashFoundFLAG == false);
-        blockchain.add(newBlock);
-        
+        System.err.println("Set the new block");
+
+//        while(miner1.blockHashFoundFLAG == false);
+//        blockchain.add(newBlock);
+//
+//        System.out.println("A's Balance: " + wA.getBalance());
+//        System.out.println("B's Balance: " + wB.getBalance());
+//        sentToB = wA.sendAmt(wB.pubKey, 25f);
+//        sentToB.processTx();
+//        System.out.println("sent coins");
+//        System.out.println("A's Balance: " + wA.getBalance());
+//        System.out.println("B's Balance: " + wB.getBalance());
+//        
+//        newBlock = new Block(sentToB, sentToB.txId);
+//        miner1.setBlock(newBlock); 
+//        while(miner1.blockHashFoundFLAG == false);
+//        blockchain.add(newBlock);
 
 //        boolean genesis = true;
 //        boolean sendOrder = true;
