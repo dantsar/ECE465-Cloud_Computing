@@ -22,13 +22,6 @@ public class Miner extends Thread
     }
 
     public void run(){
-        /* forever running */
-//        try{
-//            Thread.sleep(1500);
-//        }catch(Exception e){
-//            System.out.println("error sleeping");
-//        }
-        System.out.println("miner running");
         while(true){
             try{
                 while(mineBlock() == false) Thread.yield();
@@ -41,14 +34,14 @@ public class Miner extends Thread
         }
     }
     
-//    synchronized public 
-
-    /* set blockMinedFLAG is the appropriate hash was found */
+    /* set blockMinedFLAG if the appropriate hash was found */
     synchronized public void blockHashFound(){
+        if(blockHashFoundFLAG.get()){ /* hash was already found */
+            return;
+        }
         blockHashFoundFLAG.set(true);
         globalBlock = internalBlock;
         this.nonce = 0;
-        System.err.println("hash found");
     }
 
     synchronized public int getNonce(){
@@ -57,29 +50,31 @@ public class Miner extends Thread
     }
 
     synchronized public void setBlock(Block newBlock){
-        this.globalBlock = newBlock;
-        this.internalBlock = new Block(newBlock.txMade, newBlock.prevHash);
-        this.waitingFLAG.set(false);
-        this.blockHashFoundFLAG.set(false);
+        globalBlock = newBlock;
+        internalBlock = new Block(newBlock.txMade, newBlock.prevHash);
+        waitingFLAG.set(false);
+        blockHashFoundFLAG.set(false);
+    }
+
+    public static Block getMinedBlock(){
+        return globalBlock;
     }
 
     public boolean mineBlock(){
-       if(blockHashFoundFLAG.get()){
-            return true;
-        }
-
-        System.err.println("Mining Block");        
-
         int internalNonce = getNonce();
-        String blockHash = "bbbbbb";
+        String blockHash = null;
         String prefixString = new String(new char[difficulty]).replace('\0', '0');
         for(int i = internalNonce; i < internalNonce+nonceRange; i++)
         {
+           if(blockHashFoundFLAG.get()){ /* return because hash was already found */
+                return true;
+            }
+
             internalBlock.nonce = i;
             blockHash = internalBlock.getHash();
 
             if(blockHash.substring(0,difficulty).equals(prefixString)){
-                System.out.println(blockHash);
+                internalBlock.blockHash = blockHash;
                 blockHashFound();
                 return true;
             }
