@@ -5,7 +5,6 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
 /**
  * Helper/Utility class that provides the functions needed for hashing
  * The class only needs to be initialized once with the algorithm 
@@ -14,21 +13,11 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashUtil
 {
-    /* basically a global class */
-    private static MessageDigest md = null;
-
-    public HashUtil(String algo){
-        try{
-            md = MessageDigest.getInstance(algo);
-        }catch(NoSuchAlgorithmException e){
-            /* actual logging will be done later :^) */
-            System.out.println("Algorithm Not Found!!!");
-        }
-    }
 
     /* From https://www.baeldung.com/sha-256-hashing-java */
     public static String SHA256toHex(byte[] hash){
         try{
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             StringBuilder hexString = new StringBuilder(2 * hash.length);
             for (int i = 0; i < hash.length; i++) {
                 String hex = Integer.toHexString(0xff & hash[i]);
@@ -45,11 +34,21 @@ public class HashUtil
     }
 
     public static byte[] strToSHA256(String str){
-        return md.digest(str.getBytes()); 
+        try{
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(str.getBytes());
+            return md.digest(); 
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     public static String strToHexHash(String str){
-        return SHA256toHex(strToSHA256(str));
+        try{
+            return SHA256toHex(strToSHA256(str));
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     /* https://stackoverflow.com/questions/52384809/public-key-to-string-and-then-back-to-public-key-java */

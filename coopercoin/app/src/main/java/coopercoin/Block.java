@@ -2,7 +2,7 @@ package coopercoin;
 
 public class Block
 {
-    public String blockHash;
+    public String blockHash = null;
     public String prevHash;
     public String rootHash; //hash of the the transaction(s)
     private long date; 
@@ -26,13 +26,22 @@ public class Block
     }
 
     public String getHash(){
-        String preImage = prevHash + date + rootHash + Integer.toString(nonce);
+        String preImage = prevHash + Long.toString(date) + rootHash + Integer.toString(nonce);
+//        System.err.println(preImage);
         try{
             return HashUtil.strToHexHash(preImage);
         }catch(Exception err) {
-            System.out.println("error getting hash");
-			throw new RuntimeException(err);
-		}
+            System.err.println("error getting hash");
+            System.err.println(preImage);
+//			throw new RuntimeException(err);
+        }
+        return null;
+    }
+
+    synchronized public void setBlockHash(String hash){
+        if(blockHash == null){
+            blockHash = hash;
+        }
     }
 
 //    public void mineBlock(int prefix) {
