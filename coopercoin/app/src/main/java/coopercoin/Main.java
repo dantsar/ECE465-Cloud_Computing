@@ -20,47 +20,47 @@ public class Main{
     
 
     public static void main(String [] args){
-        Security.addProvider(new BouncyCastleProvider());
-        new HashUtil("SHA-256");
-
-        wA = new Wallet();
-        wB = new Wallet();
-        Wallet coinbase = new Wallet();
-
-        /* Genesis Transaction */
-        float genesisAmount = 100f;
-        genesisTx = new Tx(coinbase.pubKey, wA.pubKey, genesisAmount, null);
-        genesisTx.setHash();
-        genesisTx.digitalSignature = coinbase.signTx(genesisTx.txHash);
-        genesisTx.txOut.add(0, new Tx().new Output(wA.pubKey, genesisAmount, genesisTx.txId));
-        UTXOPool.put(genesisTx.txOut.get(0).txId, genesisTx.txOut.get(0));
-
-        Block genesisBlock = new Block(genesisTx, "0");
-        
-        Miner miner1 = new Miner(genesisBlock, difficulty);
-        Miner miner2 = new Miner(genesisBlock, difficulty);
-        Miner miner3 = new Miner(genesisBlock, difficulty);
-
-        miner1.start();
-        miner2.start();
-        miner3.start();
-        
-        while(Miner.blockHashFoundFLAG == false);
-        blockchain.add(genesisBlock);
-
-        System.out.println("A's Balance: " + wA.getBalance());
-        System.out.println("B's Balance: " + wB.getBalance());
-        Tx sentToB = wA.sendAmt(wB.pubKey, 25f);
-        sentToB.processTx();
-        System.out.println("sent coins");
-        System.out.println("A's Balance: " + wA.getBalance());
-        System.out.println("B's Balance: " + wB.getBalance());
-        
-        Block newBlock = new Block(sentToB, sentToB.txId);
-        miner1.setBlock(newBlock); 
-        while(miner1.blockHashFoundFLAG == false);
-        blockchain.add(newBlock);
-        
+//        Security.addProvider(new BouncyCastleProvider());
+//        new HashUtil("SHA-256");
+//
+//        wA = new Wallet();
+//        wB = new Wallet();
+//        Wallet coinbase = new Wallet();
+//
+//        /* Genesis Transaction */
+//        float genesisAmount = 100f;
+//        genesisTx = new Tx(coinbase.pubKey, wA.pubKey, genesisAmount, null);
+//        genesisTx.setHash();
+//        genesisTx.digitalSignature = coinbase.signTx(genesisTx.txHash);
+//        genesisTx.txOut.add(0, new Tx().new Output(wA.pubKey, genesisAmount, genesisTx.txId));
+//        UTXOPool.put(genesisTx.txOut.get(0).txId, genesisTx.txOut.get(0));
+//
+//        Block genesisBlock = new Block(genesisTx, "0");
+//        
+//        Miner miner1 = new Miner(genesisBlock, difficulty);
+//        Miner miner2 = new Miner(genesisBlock, difficulty);
+//        Miner miner3 = new Miner(genesisBlock, difficulty);
+//
+//        miner1.start();
+//        miner2.start();
+//        miner3.start();
+//        
+//        while(Miner.blockHashFoundFLAG == false);
+//        blockchain.add(genesisBlock);
+//
+//        System.out.println("A's Balance: " + wA.getBalance());
+//        System.out.println("B's Balance: " + wB.getBalance());
+//        Tx sentToB = wA.sendAmt(wB.pubKey, 25f);
+//        sentToB.processTx();
+//        System.out.println("sent coins");
+//        System.out.println("A's Balance: " + wA.getBalance());
+//        System.out.println("B's Balance: " + wB.getBalance());
+//        
+//        Block newBlock = new Block(sentToB, sentToB.txId);
+//        miner1.setBlock(newBlock); 
+//        while(miner1.blockHashFoundFLAG == false);
+//        blockchain.add(newBlock);
+//        
 
 //        boolean genesis = true;
 //        boolean sendOrder = true;
