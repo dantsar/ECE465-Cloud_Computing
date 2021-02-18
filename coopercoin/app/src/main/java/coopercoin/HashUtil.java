@@ -1,6 +1,7 @@
 package coopercoin;
 
 import java.util.Base64;
+import java.util.ArrayList;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,21 +17,15 @@ public class HashUtil
 
     /* From https://www.baeldung.com/sha-256-hashing-java */
     public static String SHA256toHex(byte[] hash){
-        try{
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            StringBuilder hexString = new StringBuilder(2 * hash.length);
-            for (int i = 0; i < hash.length; i++) {
-                String hex = Integer.toHexString(0xff & hash[i]);
-                if(hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) {
+                hexString.append('0');
             }
-            return hexString.toString();
-
-        } catch(Exception err) {
-			throw new RuntimeException(err);
-		}
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     public static byte[] strToSHA256(String str){
@@ -55,6 +50,16 @@ public class HashUtil
     public static String hexFromKey(Key key){
         if(key == null) return "0";
         return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
+
+    public ArrayList<String> hashOfTxList(ArrayList<Tx> txMade){
+        ArrayList<String> hashList = new ArrayList<String>();
+        
+        for(Tx i : txMade){
+            hashList.add(i.getStrHash());
+        }
+
+        return hashList;
     }
 
 }

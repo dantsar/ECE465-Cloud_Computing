@@ -14,7 +14,7 @@ public class Main{
     public static Wallet wB;
     public static Tx genesisTx;
 
-    public static int difficulty = 7;
+    public static int difficulty = 4;
     public static ArrayList<Block> blockchain = new ArrayList<Block>();
     
 
@@ -78,6 +78,8 @@ public class Main{
                 while(Miner.blockHashFoundFLAG.get() == false) Thread.yield(); /* waits until hash is found */
                 blockchain.add(Miner.getMinedBlock());
 
+                System.out.println();
+
                 amtSending = wB.getBalance()/2;
                 System.out.println("B's Balance: " + wB.getBalance());
                 System.out.println("A's Balance: " + wA.getBalance());
@@ -87,6 +89,7 @@ public class Main{
                 System.out.println("B's Balance: " + wB.getBalance());
                 System.out.println("A's Balance: " + wA.getBalance());
                 
+                System.out.println();
                 newBlock = new Block(sentTx, blockchain.get(blockchain.size()-1).blockHash);
                 miner1.setBlock(newBlock); 
 

@@ -50,7 +50,6 @@ public class Tx
     
     public Tx(){}
 
-    /* don't forget the in and out */
     public Tx(PublicKey sender, PublicKey receiver, float amount, ArrayList<Input> inputs){
         this.sender = sender;
         this.receiver = receiver;
@@ -133,4 +132,8 @@ public class Tx
             System.out.println(e);
         }
     }
+    public String getStrHash(){
+        return HashUtil.SHA256toHex(txHash);
+    }
+
 }
