@@ -8,11 +8,11 @@ public class Block
     public BlockHeader header;
     public String blockHash = null;
     public String prevHash;
-    public String rootHash; //hash of the the transaction(s)
+//    public String rootHash; //hash of the the transaction(s)
     private long date; 
     public ArrayList<Tx> txMade;
     public int nonce; 
-    public final int txLimit = 8;
+    public final int txLimit = 4;
     public int blocksize;
 
     public Block(Tx txMade, String prevHash){
@@ -21,37 +21,41 @@ public class Block
 
         this.prevHash = prevHash;
         this.date = System.currentTimeMillis();
-        this.blockHash = getHash();
+        //this.blockHash = getHash();
         this.txMade.add(txMade);
         this.blocksize = 1;
 //        setBlockTxHash();
     }
 
     // TO DO: implement merkle tree for more transactions */
-    public void setBlockTxHash(){
-        // this.rootHash = HashUtil.strToHexHash(HashUtil.hexFromKey(txMade.sender)+
-        //                                       HashUtil.hexFromKey(txMade.receiver)+
-        //                                       Float.toString(txMade.amtSent)+
-        //                                       txMade.txId);
-    }
+//    // public void setBlockTxHash(){
+//        this.rootHash = HashUtil.strToHexHash(HashUtil.hexFromKey(txMade.sender)+
+//                                              HashUtil.hexFromKey(txMade.receiver)+
+//                                              Float.toString(txMade.amtSent)+
+//                                              txMade.txId);
+//    // }
 
+    /* for now, only works if the txLimit is a power of two :^) */
     public void setRootHash(){
-        
-        while(txMade.size() != 1){
-            int len = txMade.size();
-            for(int i = 0; i < len; i++)
+        ArrayList<String> hexHashes = HashUtil.hashOfTxList(txMade);
+        while(hexHashes.size() > 1){
+            int len = hexHashes.size();
+            System.err.println("Size: " + len);
+            for(int i = 0; i < len/2; i++)
             {
-                
-                /* apply a crappy merkle tree algorithm */
+                String left = hexHashes.remove(i);
+                String right = hexHashes.remove(i);
 
+                String hash = HashUtil.strToHexHash(left+right);
+                hexHashes.add(i, hash);
             }
         }
-
-
+        header.setRootHash(hexHashes.get(0));
     }
 
     public boolean addTx(Tx tx){
-        if(txLimit == 10){
+        if(blocksize == txLimit){
+            setRootHash();
             return false;
         }
         blocksize++;
@@ -59,16 +63,16 @@ public class Block
         return true;
     }
 
-    public String getHash(){
-        String preImage = prevHash + Long.toString(date) + rootHash + Integer.toString(nonce);
-        try{
-            return HashUtil.strToHexHash(preImage);
-        }catch(Exception err) {
-            System.err.println("error getting hash");
-            System.err.println(preImage);
-			throw new RuntimeException(err);
-        }
-    }
+    // public String getHash(){
+    //     String preImage = prevHash + Long.toString(date) + rootHash + Integer.toString(nonce);
+    //     try{
+    //         return HashUtil.strToHexHash(preImage);
+    //     }catch(Exception err) {
+    //         System.err.println("error getting hash");
+    //         System.err.println(preImage);
+	// 		throw new RuntimeException(err);
+    //     }
+    // }
 
     synchronized public void setBlockHash(String hash){
         if(blockHash == null){

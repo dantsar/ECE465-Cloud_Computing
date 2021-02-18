@@ -19,93 +19,96 @@ public class Main{
     
 
     public static void main(String [] args){
-        Security.addProvider(new BouncyCastleProvider());
 
-        wA = new Wallet();
-        wB = new Wallet();
-        Wallet coinbase = new Wallet();
 
-        System.err.println("Wallets created");
 
-        /* Genesis Transaction */
-        float genesisAmount = 100f;
-        genesisTx = new Tx(coinbase.pubKey, wA.pubKey, genesisAmount, null);
-        genesisTx.setHash();
-        genesisTx.digitalSignature = coinbase.signTx(genesisTx.txHash);
-        genesisTx.txOut.add(0, new Tx().new Output(wA.pubKey, genesisAmount, genesisTx.txId));
-        UTXOPool.put(genesisTx.txOut.get(0).txId, genesisTx.txOut.get(0));
-
-        Block genesisBlock = new Block(genesisTx, "0");
-        System.out.println("Wallet A received " + genesisAmount);
-
-        Miner miner1 = new Miner(genesisBlock, difficulty);
-        Miner miner2 = new Miner(genesisBlock, difficulty);
-        Miner miner3 = new Miner(genesisBlock, difficulty);
-
-        miner1.start();
-        miner2.start();
-        miner3.start();
-
-        System.out.println("Calculating hash for genesis block {turn down difficulty if needed}");
-        
-        try{
-            while(Miner.blockHashFoundFLAG.get() == false) Thread.sleep(100); /* waits until hash is found */
-        }catch(Exception e){
-            System.out.println("problem");
-        }
-
-        blockchain.add(genesisBlock);
-        
-        float amtSending;
-        Block newBlock = null;
-        Tx sentTx = null;
-        int itterations = 4;
-        for(int i = 0; i < itterations; i++) /* replace with for(;;) for infinite transactions */
-        {
-            try{
-                amtSending = wA.getBalance()/2;
-                System.out.println("A's Balance: " + wA.getBalance());
-                System.out.println("B's Balance: " + wB.getBalance());
-                sentTx = wA.sendAmt(wB.pubKey, amtSending);
-                sentTx.processTx();
-                System.out.println("A sent B " + amtSending + " coins");
-                System.out.println("A's Balance: " + wA.getBalance());
-                System.out.println("B's Balance: " + wB.getBalance());
-                
-                newBlock = new Block(sentTx, blockchain.get(blockchain.size()-1).blockHash);
-                miner1.setBlock(newBlock); 
-
-                while(Miner.blockHashFoundFLAG.get() == false) Thread.yield(); /* waits until hash is found */
-                blockchain.add(Miner.getMinedBlock());
-
-                System.out.println();
-
-                amtSending = wB.getBalance()/2;
-                System.out.println("B's Balance: " + wB.getBalance());
-                System.out.println("A's Balance: " + wA.getBalance());
-                sentTx = wB.sendAmt(wA.pubKey, amtSending);
-                sentTx.processTx();
-                System.out.println("B sent A " + amtSending + " coins");
-                System.out.println("B's Balance: " + wB.getBalance());
-                System.out.println("A's Balance: " + wA.getBalance());
-                
-                System.out.println();
-                newBlock = new Block(sentTx, blockchain.get(blockchain.size()-1).blockHash);
-                miner1.setBlock(newBlock); 
-
-                while(Miner.blockHashFoundFLAG.get() == false) Thread.yield(); 
-                blockchain.add(Miner.getMinedBlock());
-
-            }catch(Exception e){
-                System.err.println("houston we have a problem");
-            }
-        }
-
-        System.out.println("\nhashes of all the blocks: ");
-        for(Block i : blockchain){
-            System.out.println(i.blockHash);
-        }    
-    
+        // Security.addProvider(new BouncyCastleProvider());
+// 
+        // wA = new Wallet();
+        // wB = new Wallet();
+        // Wallet coinbase = new Wallet();
+// 
+        // System.err.println("Wallets created");
+// 
+        // /* Genesis Transaction */
+        // float genesisAmount = 100f;
+        // genesisTx = new Tx(coinbase.pubKey, wA.pubKey, genesisAmount, null);
+        // genesisTx.setHash();
+        // genesisTx.digitalSignature = coinbase.signTx(genesisTx.txHash);
+        // genesisTx.txOut.add(0, new Tx().new Output(wA.pubKey, genesisAmount, genesisTx.txId));
+        // UTXOPool.put(genesisTx.txOut.get(0).txId, genesisTx.txOut.get(0));
+// 
+        // Block genesisBlock = new Block(genesisTx, "0");
+        // System.out.println("Wallet A received " + genesisAmount);
+// 
+        // Miner miner1 = new Miner(genesisBlock, difficulty);
+        // Miner miner2 = new Miner(genesisBlock, difficulty);
+        // Miner miner3 = new Miner(genesisBlock, difficulty);
+// 
+        // miner1.start();
+        // miner2.start();
+        // miner3.start();
+// 
+        // System.out.println("Calculating hash for genesis block {turn down difficulty if needed}");
+        // 
+        // try{
+            // while(Miner.blockHashFoundFLAG.get() == false) Thread.sleep(100); /* waits until hash is found */
+        // }catch(Exception e){
+            // System.out.println("problem");
+        // }
+// 
+        // blockchain.add(genesisBlock);
+        // 
+        // float amtSending;
+        // Block newBlock = null;
+        // Tx sentTx = null;
+        // int itterations = 4;
+        // for(int i = 0; i < itterations; i++) /* replace with for(;;) for infinite transactions */
+        // {
+            // try{
+                // amtSending = wA.getBalance()/2;
+                // System.out.println("A's Balance: " + wA.getBalance());
+                // System.out.println("B's Balance: " + wB.getBalance());
+                // sentTx = wA.sendAmt(wB.pubKey, amtSending);
+                // sentTx.processTx();
+                // System.out.println("A sent B " + amtSending + " coins");
+                // System.out.println("A's Balance: " + wA.getBalance());
+                // System.out.println("B's Balance: " + wB.getBalance());
+                // 
+                // newBlock = new Block(sentTx, blockchain.get(blockchain.size()-1).blockHash);
+                // miner1.setBlock(newBlock); 
+// 
+                // while(Miner.blockHashFoundFLAG.get() == false) Thread.yield(); /* waits until hash is found */
+                // blockchain.add(Miner.getMinedBlock());
+// 
+                // System.out.println();
+// 
+                // amtSending = wB.getBalance()/2;
+                // System.out.println("B's Balance: " + wB.getBalance());
+                // System.out.println("A's Balance: " + wA.getBalance());
+                // sentTx = wB.sendAmt(wA.pubKey, amtSending);
+                // sentTx.processTx();
+                // System.out.println("B sent A " + amtSending + " coins");
+                // System.out.println("B's Balance: " + wB.getBalance());
+                // System.out.println("A's Balance: " + wA.getBalance());
+                // 
+                // System.out.println();
+                // newBlock = new Block(sentTx, blockchain.get(blockchain.size()-1).blockHash);
+                // miner1.setBlock(newBlock); 
+// 
+                // while(Miner.blockHashFoundFLAG.get() == false) Thread.yield(); 
+                // blockchain.add(Miner.getMinedBlock());
+// 
+            // }catch(Exception e){
+                // System.err.println("houston we have a problem");
+            // }
+        // }
+// 
+        // System.out.println("\nhashes of all the blocks: ");
+        // for(Block i : blockchain){
+            // System.out.println(i.blockHash);
+        // }    
+    // 
 
     }
 }

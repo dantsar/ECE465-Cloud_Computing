@@ -15,7 +15,7 @@ public class Miner extends Thread
 
     public Miner(Block startingBlock, int startingDifficulty){
         this.globalBlock = startingBlock;
-        this.internalBlock = new Block(startingBlock.txMade, startingBlock.prevHash);
+//        this.internalBlock = new Block(startingBlock.txMade, startingBlock.prevHash);
         this.difficulty = startingDifficulty;
         this.nonce = 0;
         this.nonceRange = 10000;
@@ -51,7 +51,7 @@ public class Miner extends Thread
 
     synchronized public void setBlock(Block newBlock){
         globalBlock = newBlock;
-        internalBlock = new Block(newBlock.txMade, newBlock.prevHash);
+//        internalBlock = new Block(newBlock.txMade, newBlock.prevHash);
         waitingFLAG.set(false);
         blockHashFoundFLAG.set(false);
     }
@@ -66,18 +66,18 @@ public class Miner extends Thread
         String prefixString = new String(new char[difficulty]).replace('\0', '0');
         for(int i = internalNonce; i < internalNonce+nonceRange; i++)
         {
-           if(blockHashFoundFLAG.get()){ /* return because hash was already found */
-                return true;
-            }
+        //    if(blockHashFoundFLAG.get()){ /* return because hash was already found */
+        //         return true;
+        //     }
 
-            internalBlock.nonce = i;
-            blockHash = internalBlock.getHash();
+        //     internalBlock.nonce = i;
+        //     blockHash = internalBlock.getHash();
 
-            if(blockHash.substring(0,difficulty).equals(prefixString)){
-                internalBlock.blockHash = blockHash;
-                blockHashFound();
-                return true;
-            }
+        //     if(blockHash.substring(0,difficulty).equals(prefixString)){
+        //         internalBlock.blockHash = blockHash;
+        //         blockHashFound();
+        //         return true;
+        //     }
         }
 
         return false;

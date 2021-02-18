@@ -52,7 +52,7 @@ public class HashUtil
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
-    public ArrayList<String> hashOfTxList(ArrayList<Tx> txMade){
+    public static ArrayList<String> hashOfTxList(ArrayList<Tx> txMade){
         ArrayList<String> hashList = new ArrayList<String>();
         
         for(Tx i : txMade){

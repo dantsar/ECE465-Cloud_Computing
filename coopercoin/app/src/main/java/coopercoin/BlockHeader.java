@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class BlockHeader
 {
-//    public String blockhash;
+    public String blockHash;
     public String prevHash;
     public String rootHash;
     public int nonce;
@@ -19,7 +19,21 @@ public class BlockHeader
     public void setRootHash(String rootHash){
         this.rootHash = rootHash;
         this.date = new Date().getTime();
+    }
 
+    public String testHash(int nonce){
+        String preImage = prevHash + Long.toString(date) + rootHash + Integer.toString(nonce);
+        return HashUtil.strToHexHash(preImage);
+    }
+
+    /* called when appropriate nonce was found */
+    public void setBlockHash(int nonce, String blockHash){
+        this.nonce = nonce;
+        this.blockHash = blockHash;
+    }
+
+    public String getBlockHash(){
+        return this.blockHash;
     }
 
 }
