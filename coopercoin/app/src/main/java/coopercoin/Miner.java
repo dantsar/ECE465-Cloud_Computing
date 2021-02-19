@@ -1,33 +1,36 @@
 package coopercoin;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+
 public class Miner extends Thread
 {
     public static int difficulty;
-    public static Block globalBlock;
-    public Block internalBlock;
     public static int nonce;
-    public static int nonceRange;
+    private final int nonceRange = 10000;
+    public static BlockHeader globalHeader;
+    public BlockHeader internalHeader;
 
     /* flags for Miners */
     public static AtomicBoolean blockHashFoundFLAG = new AtomicBoolean(false);
     public static AtomicBoolean waitingFLAG = new AtomicBoolean(false); /* set if waiting for new block */
 
-    public Miner(Block startingBlock, int startingDifficulty){
-        this.globalBlock = startingBlock;
-//        this.internalBlock = new Block(startingBlock.txMade, startingBlock.prevHash);
+    public Miner(int startingDifficulty){
         this.difficulty = startingDifficulty;
-        this.nonce = 0;
-        this.nonceRange = 10000;
+        waitingFLAG.set(true);
     }
 
     public void run(){
         while(true){
             try{
-                while(mineBlock() == false) Thread.yield();
-                waitingFLAG.set(true);
-                //return;
+
                 while(waitingFLAG.get() == true) Thread.yield();
+                this.internalHeader = new BlockHeader(globalHeader);
+
+                /* Mine the block */
+                while(mineBlock() == false);
+                waitingFLAG.set(true);
+
             }catch(Exception e){
                 System.err.println(e);
             }
@@ -40,47 +43,57 @@ public class Miner extends Thread
             return;
         }
         blockHashFoundFLAG.set(true);
-        globalBlock = internalBlock;
+        System.out.println("Found: " + internalHeader.blockHash);
+        globalHeader = internalHeader;
         this.nonce = 0;
     }
 
-    synchronized public int getNonce(){
-        nonce += 100;
+    synchronized private int getNonce(){
+        nonce += nonceRange;
         return nonce;
     }
 
-    synchronized public void setBlock(Block newBlock){
-        globalBlock = newBlock;
-//        internalBlock = new Block(newBlock.txMade, newBlock.prevHash);
+    synchronized public static void setBlock(BlockHeader newHeader){
+        globalHeader = newHeader;
         waitingFLAG.set(false);
         blockHashFoundFLAG.set(false);
     }
 
-    public static Block getMinedBlock(){
-        return globalBlock;
-    }
-
     public boolean mineBlock(){
+        // internalHeader = new BlockHeader(globalHeader);
         int internalNonce = getNonce();
         String blockHash = null;
         String prefixString = new String(new char[difficulty]).replace('\0', '0');
         for(int i = internalNonce; i < internalNonce+nonceRange; i++)
         {
-        //    if(blockHashFoundFLAG.get()){ /* return because hash was already found */
-        //         return true;
-        //     }
+            if(blockHashFoundFLAG.get()){ /* return because hash was already found */
+                return true;
+            }
+            
+            blockHash = internalHeader.testHash(i);
 
-        //     internalBlock.nonce = i;
-        //     blockHash = internalBlock.getHash();
+            if(blockHash.substring(0,difficulty).equals(prefixString)){
+                internalHeader.blockHash = blockHash;
+                blockHashFound();
+                return true;
+            }
 
-        //     if(blockHash.substring(0,difficulty).equals(prefixString)){
-        //         internalBlock.blockHash = blockHash;
-        //         blockHashFound();
-        //         return true;
-        //     }
         }
-
         return false;
     }
+
+    public static BlockHeader getMinedHeader(){
+        return globalHeader;
+    }
+
+    /* test and wait */
+    public static void TAW(){
+        try{
+            while(Miner.blockHashFoundFLAG.get() == false) Thread.sleep(100); /* waits until hash is found */
+        }catch(Exception e){
+            System.out.println("problem");
+        }
+    }
+    
 
 }
